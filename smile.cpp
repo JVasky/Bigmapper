@@ -1,7 +1,7 @@
 #include "image.xbm"
 #include<stdio.h>
 #include<queue>
-#define bitRead(value, bit) (((value) >> (bit)) & 0x01)
+#define bitRead(value, bit) (((value) >> (bit)) & 0x01) // Macro for bitRead()
 
 struct coordinate{
   int x;
