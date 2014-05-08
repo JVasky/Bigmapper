@@ -2,6 +2,7 @@
 #include<stdio.h>
 #include<queue>
 #include<cmath>
+#include "dijks.h"
 #define bitRead(value, bit) (((value) >> (bit)) & 0x01) // Macro for bitRead()
 
 struct coordinate{
@@ -43,7 +44,7 @@ int main(){
     coordinates[i] = coords.front();
     coords.pop();
   }
-  int adjMatrix[numOfVertices][numOfVertices];
+  int adjMatrix[25][25];
   for(int i = 0; i < numOfVertices; i++){
     coordinate c1 = coordinates[i];
     for(int j = 0; j < numOfVertices; j++){
@@ -58,20 +59,11 @@ int main(){
     }
     printf("\n");
   }
+  
+  Dijkstra G;
+  G.setMat(adjMatrix);
+  //printf("smile: %d",adjMatrix);
+  G.calculateDistance();
+  G.output();
   return 0;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
