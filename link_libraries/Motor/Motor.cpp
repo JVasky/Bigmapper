@@ -29,7 +29,7 @@ Motor::Motor(byte powerPin, byte directionPin, byte speedPin, byte LED){
 Motor::~Motor(){}
 
 void Motor::on(){
-  analogWrite(powerPin,255);
+  //analogWrite(powerPin,255);
   digitalWrite(LED,HIGH);  // test LED
 }
 
