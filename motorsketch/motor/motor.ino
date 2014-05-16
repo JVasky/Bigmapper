@@ -1,11 +1,30 @@
-int M1 = 4;
-int M2 = 7;
+#include <NewPing.h>
 
-int LMotor = 5;
-int RMotor = 6;
+byte M1 = 4;
+byte M2 = 7;
+byte led = 10;
+
+byte LMotor = 5;
+byte RMotor = 6;
+
+unsigned long t1 = 0;
+
+#define USSampleSize 50
+
+unsigned int distances[USSampleSize];
+unsigned int distReg = 0;
+int distCounter = 0;
+
+#define LOOP_DELAY 1
 
 #define velocity 1.0   // cm/ms ?
-#define turnDist 500.0 //cm ?
+#define turnDist 500.0 // cm ?
+
+#define TRIGGER_PIN 12
+#define ECHO_PIN 11
+#define MAX_DISTANCE 200
+
+NewPing us(TRIGGER_PIN,ECHO_PIN,MAX_DISTANCE);
 
 void setup(){
   // Turn on M1, M2
@@ -14,38 +33,59 @@ void setup(){
   digitalWrite(M1,HIGH);
   digitalWrite(M2,HIGH);
   
-  Serial.begin(9600);
+  pinMode(led,OUTPUT);
+  
+  Serial.begin(115200);
 }
 
 
 void loop(){
   
-  goStraight(3000);
+  unsigned int dist = us.ping() / US_ROUNDTRIP_CM;
+  //int avgdist = avgSample(dist,USSampleSize,distances,&distCounter,&distReg);
+  //int avgdist = avgSample(dist,USSampleSize);
+  Serial.print("distance (cm): ");
+  Serial.print(dist);
+  //Serial.print(us.ping_median()/US_ROUNDTRIP_CM);
+  Serial.print("\t");
+  if((us.ping_median()/US_ROUNDTRIP_CM) < 25){
+    digitalWrite(led,HIGH);
+    //motorOn(LMotor);
+  }
+  else {
+    digitalWrite(led,LOW);
+    motorOff(LMotor);
+  }
+  Serial.println(millis()-t1);
+  t1 = millis();
+  
+  /*goStraight(3000);
   STOP(2000);
   turnRight();
   STOP(2000);
   turnLeft();
+  STOP(2000);
   goStraight(10000);
   
-  TERMINATE();
+  TERMINATE();*/
   
-  delay(1);
+  delay(LOOP_DELAY);
 }
 
   // Basic Motor Functions
 
-void motorOn(int motorPin){
+void motorOn(byte motorPin){
   analogWrite(motorPin,255);
 }
 
-void motorOff(int motorPin){
+void motorOff(byte motorPin){
   analogWrite(motorPin,0);
 }
 
   // Boolean Motor Functions
 
   // *t is address of global timer variable
-boolean runFor(int m,int time,int *t){
+boolean runFor(byte m,int time,int *t){
   boolean complete = false;
   if(*t < time){
     motorOn(m);
@@ -93,11 +133,16 @@ boolean turnLeft(int *t){
 
 // Void Motor Functions
 
-void STOP(int time){
+void STOP(int time){  // move to motor class
   int timer = 0;
   while(!STOP(time,&timer)){
-    delay(1);
+    delay(LOOP_DELAY);
   }
+}
+
+void STOP(){
+  motorOff(RMotor);
+  motorOff(LMotor);
 }
 
 void TERMINATE(){
@@ -109,20 +154,36 @@ void TERMINATE(){
 void goStraight(int dist){
   int timer = 0;
   while(!goStraight(dist,&timer)){
-    delay(1);
+    delay(LOOP_DELAY);
   }
 }
 
 void turnRight(){
   int timer = 0;
   while(!turnRight(&timer)){
-    delay(1);
+    delay(LOOP_DELAY);
   }
 }
 
 void turnLeft(){
   int timer = 0;
   while(!turnLeft(&timer)){
-    delay(1);
+    delay(LOOP_DELAY);
   }
+}
+
+// Ultrasound data functions
+
+/*int avgSample(unsigned int dist,int sampleSize){
+  unsigned int a[sampleSize];
+  int acounter = 0;
+  unsigned int sum = 0;
+  return avgSample(dist,sampleSize,a,&acounter,&sum);
+}*/
+
+int avgSample(unsigned int dist,int sampleSize,unsigned int *a,int *acounter, unsigned int *sum){
+  *sum = *sum - a[*acounter] + dist;
+  a[*acounter] = dist;
+  *acounter = (*acounter + 1)%sampleSize;
+  return *sum/sampleSize;
 }

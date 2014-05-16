@@ -24,17 +24,15 @@ public:
   ~Navigator();
 
   void straight(unsigned long);
+  void straightNTiles(byte);
 
-  void turnLeft(unsigned long);
+  void turnLeft();
 
-  void turnRight(unsigned long);
+  void turnRight();
 
   void STOP();
 
 private:
-  void straight();
-  void turnLeft();
-  void turnRight();
 
   void pause();
 

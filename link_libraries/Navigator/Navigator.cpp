@@ -22,18 +22,14 @@ Navigator::~Navigator(){
 
     // STRAIGHT //
 
-void Navigator::straight(){
-  RM->on();
-  LM->on();
-}
-
 void Navigator::straight(unsigned long time){
   initOp(time);
 
   while(!atTarget()){
 
     if(!isObstructed()){
-      straight();
+      RM->on();
+      LM->on();
     }
     else{
       pause();
@@ -43,17 +39,17 @@ void Navigator::straight(unsigned long time){
   STOP();
 }
 
+void Navigator::straightNTiles(byte n){
+  straight(n * (unsigned long)TILE_DISTANCE);
+}
+
     // RIGHT //
 
 void Navigator::turnRight(){
-  RM->off();
-  LM->on();
-}
-
-void Navigator::turnRight(unsigned long time){
-  initOp(time);
+  initOp(TURN_DISTANCE);
   while(!atTarget()){
-    turnRight();
+    RM->off();
+    LM->on();
   }
   STOP();
 }
@@ -61,14 +57,10 @@ void Navigator::turnRight(unsigned long time){
     // LEFT //
 
 void Navigator::turnLeft(){
-  RM->on();
-  LM->off();
-}
-
-void Navigator::turnLeft(unsigned long time){
-  initOp(time);
+  initOp(TURN_DISTANCE);
   while(!atTarget()){
-    turnLeft();
+    RM->on();
+    LM->off();
   }
   STOP();
 }
