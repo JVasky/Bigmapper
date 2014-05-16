@@ -12,6 +12,7 @@
 #include <Navigator.h>
 #include <Mapper.h>
 #include <NewPing.h>
+#include <Sound.h>
 
 #define bitRead(value, bit) (((value) >> (bit)) & 0x01) // Macro for bitRead()
 
@@ -30,7 +31,7 @@
 #define US_ECHO 11
 
 #define LED 13
-
+#define SPEAKER A0
 using namespace std;
 
 #define image_width 16
@@ -65,6 +66,8 @@ Motor LMotor(LMotorPow,M1,13);
 
 NewPing us(US_TRIGGER,US_ECHO);
 Navigator robot(&RMotor, &LMotor,&us);
+
+Sound s(SPEAKER);
 
 void setup(){
   Serial.begin(9600);
@@ -159,7 +162,8 @@ void loop(){
   
   current = target;  
   digitalWrite(LED, HIGH);
-  delay(4000);
+  s.beep();
+  delay(3000);
   digitalWrite(LED, LOW); 
   while(path.empty() && target.x == 0 && target.y == 0){
     
