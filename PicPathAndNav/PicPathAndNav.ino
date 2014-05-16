@@ -65,7 +65,7 @@ Motor RMotor(RMotorPow,M2,9);
 Motor LMotor(LMotorPow,M1,13);
 
 NewPing us(US_TRIGGER,US_ECHO);
-Navigator robot(&RMotor, &LMotor,&us);
+Navigator robot(&RMotor, &LMotor,0);
 
 Sound s(SPEAKER);
 
@@ -130,6 +130,7 @@ void setup(){
 }
 
 void loop(){
+  Serial.println("Beginning of loop");
   if(path.empty()){
    target.x = 0;
    target.y = 0;
@@ -138,35 +139,60 @@ void loop(){
    target = path.front();
    path.pop();
   }
+  
+  Serial.print("Current: ");
+  Serial.print(current.x);
+  Serial.print(", ");
+  Serial.println(current.y);
+  
+  Serial.print("Target: ");
+  Serial.print(target.x);
+  Serial.print(", ");
+  Serial.println(target.y);
+  
   // first get to correct row
+  
+  Serial.println("Go to row");
   if(target.x > current.x){ // target is North
    toNorth(&robot);
+   Serial.println("TO NORTH");
+   Serial.print("Target - Current = ");
+   Serial.println(target.x - current.x);
    robot.straightNTiles(target.x - current.x);
+   Serial.println("WENT STRAIGHT");
   } 
   else if(target.x < current.x){  // target South
    toSouth(&robot);
+   Serial.println("TO SOUTH");
    robot.straightNTiles(current.x - target.x);
   }
   else{} // it is in the same row so don't do anything
   
+  delay(1000);
+  
   // now correct column
+  
+  Serial.println("Go to col");
   if(target.y > current.y){ // target East
    toEast(&robot);
+   Serial.println("TO EAST");
    robot.straightNTiles(target.y - current.y); 
   }
   else if(target.y < current.y){  // target West
    toWest(&robot);
+   Serial.println("TO WEST");
    robot.straightNTiles(current.y - target.y);
   }
   else{} // in same column, nothing to do
   
-  current = target;  
+  current = target;
+  Serial.println("New current assigned");  
   digitalWrite(LED, HIGH);
   s.beep();
   delay(3000);
   digitalWrite(LED, LOW); 
   while(path.empty() && target.x == 0 && target.y == 0){
-    
+    Serial.println("IN END WHILE");
   } 
 }
 
