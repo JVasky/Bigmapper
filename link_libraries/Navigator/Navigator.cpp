@@ -27,6 +27,16 @@ void Navigator::straight(unsigned long time){
 
   while(!atTarget()){
 
+Serial.print(runTime);
+Serial.print("\t");
+Serial.print(freezeTime);
+Serial.print("\t");
+Serial.print(targetTime+freezeTime);
+Serial.print("\t");
+Serial.print(atTarget());
+Serial.print("\t");
+Serial.println(isObstructed());
+
     if(!isObstructed()){
       RM->on();
       LM->on();
@@ -73,6 +83,17 @@ void Navigator::STOP(){
 void Navigator::pause(){
   unsigned long freezeStart = millis();
   while(isObstructed()){
+
+Serial.print(runTime);
+Serial.print("\t");
+Serial.print(freezeTime);
+Serial.print("\t");
+Serial.print(targetTime+freezeTime);
+Serial.print("\t");
+Serial.print(atTarget());
+Serial.print("\t");
+Serial.println(isObstructed());
+
     STOP();
   }
   freezeTime = freezeTime + millis() - freezeStart;
@@ -85,7 +106,8 @@ void Navigator::initOp(unsigned long time){
 }
 
 boolean Navigator::isObstructed(){
-  return (us != 0 ) && (us->ping_median()/US_ROUNDTRIP_CM) < MIN_COLLISION_DISTANCE;
+  int dist = us->ping_median()/US_ROUNDTRIP_CM;
+  return (us != 0) && (dist <= MIN_COLLISION_DISTANCE) && (dist != 0);
 }
 
 boolean Navigator::atTarget(){

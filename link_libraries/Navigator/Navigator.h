@@ -5,29 +5,24 @@
 #include <NewPing.h>
 #include <Arduino.h>
 
-//class NavOp;
-
 class Navigator {
 
   Motor* RM;
   Motor* LM;
   NewPing* us;
 
-  //NavOp* currentOp;
-
   unsigned long runTime;
   unsigned long freezeTime;
   unsigned long targetTime;
 
 public:
+
   Navigator(Motor*,Motor*,NewPing*);
   ~Navigator();
 
   void straight(unsigned long);
   void straightNTiles(byte);
-
   void turnLeft();
-
   void turnRight();
 
   void STOP();
@@ -39,7 +34,7 @@ private:
   boolean isObstructed();
   boolean atTarget();
 
-  void initOp(unsigned long/*,NavOp*/);
+  void initOp(unsigned long);
 
 };
 
