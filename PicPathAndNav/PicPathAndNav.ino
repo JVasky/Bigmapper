@@ -155,6 +155,7 @@ void loop(){
   Serial.println("Go to row");
   if(target.x > current.x){ // target is North
    toNorth(&robot);
+   delay(500);
    Serial.println("TO NORTH");
    Serial.print("Target - Current = ");
    Serial.println(target.x - current.x);
@@ -163,6 +164,7 @@ void loop(){
   } 
   else if(target.x < current.x){  // target South
    toSouth(&robot);
+   delay(500);
    Serial.println("TO SOUTH");
    robot.straightNTiles(current.x - target.x);
   }
@@ -175,11 +177,13 @@ void loop(){
   Serial.println("Go to col");
   if(target.y > current.y){ // target East
    toEast(&robot);
+   delay(500);
    Serial.println("TO EAST");
    robot.straightNTiles(target.y - current.y); 
   }
   else if(target.y < current.y){  // target West
    toWest(&robot);
+   delay(500);
    Serial.println("TO WEST");
    robot.straightNTiles(current.y - target.y);
   }
@@ -220,8 +224,10 @@ void toSouth(Navigator* n){
    n->turnLeft(); 
   }
   else if(direction == NORTH){
-   n->turnRight();
-   n->turnRight(); 
+    Serial.println("First Right");
+    n->turnRight();
+    Serial.println("Second Right");
+    n->turnRight(); 
   }
   direction = SOUTH;
 }
