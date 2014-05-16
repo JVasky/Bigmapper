@@ -5,7 +5,7 @@
 #include <NewPing.h>
 #include <Arduino.h>
 
-class NavOp;
+//class NavOp;
 
 class Navigator {
 

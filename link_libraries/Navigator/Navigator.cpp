@@ -20,6 +20,8 @@ Navigator::~Navigator(){
   delete us;
 }
 
+    // STRAIGHT //
+
 void Navigator::straight(){
   RM->on();
   LM->on();
@@ -27,10 +29,6 @@ void Navigator::straight(){
 
 void Navigator::straight(unsigned long time){
   initOp(time);
-
-  freezeTime = 0;
-  runTime = millis();
-  targetTime = time + runTime;
 
   while(!atTarget()){
 
@@ -45,9 +43,34 @@ void Navigator::straight(unsigned long time){
   STOP();
 }
 
+    // RIGHT //
+
 void Navigator::turnRight(){
   RM->off();
   LM->on();
+}
+
+void Navigator::turnRight(unsigned long time){
+  initOp(time);
+  while(!atTarget()){
+    turnRight();
+  }
+  STOP();
+}
+
+    // LEFT //
+
+void Navigator::turnLeft(){
+  RM->on();
+  LM->off();
+}
+
+void Navigator::turnLeft(unsigned long time){
+  initOp(time);
+  while(!atTarget()){
+    turnLeft();
+  }
+  STOP();
 }
 
 void Navigator::STOP(){
@@ -58,7 +81,6 @@ void Navigator::STOP(){
 void Navigator::pause(){
   unsigned long freezeStart = millis();
   while(isObstructed()){
-
     STOP();
   }
   freezeTime = freezeTime + millis() - freezeStart;
@@ -71,7 +93,7 @@ void Navigator::initOp(unsigned long time){
 }
 
 boolean Navigator::isObstructed(){
-  return (us->ping_median()/US_ROUNDTRIP_CM) < MIN_COLLISION_DISTANCE;
+  return (us != 0 ) && (us->ping_median()/US_ROUNDTRIP_CM) < MIN_COLLISION_DISTANCE;
 }
 
 boolean Navigator::atTarget(){
