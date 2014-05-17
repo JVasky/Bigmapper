@@ -16,6 +16,9 @@
 
 #define bitRead(value, bit) (((value) >> (bit)) & 0x01) // Macro for bitRead()
 
+  // Comment this line to eliminate serial output
+//#define SERIAL_OUTPUT_ENABLED
+
 #define NORTH 1
 #define SOUTH 2
 #define EAST 3
@@ -70,7 +73,9 @@ Navigator robot(&RMotor, &LMotor,0);
 Sound s(SPEAKER);
 
 void setup(){
+#ifdef SERIAL_OUTPUT_ENABLED
   Serial.begin(9600);
+#endif
   pinMode(LED,OUTPUT);
   int i = 0;
   int colCount = 0;
@@ -111,26 +116,31 @@ void setup(){
 	if(tempDist < nearDist && !(tempCoord == nearest)){
 	  nearDist = tempDist;
 	  nearest = tempCoord;
-	}  
+	}
     }
     
     cur = nearest;
     path.push(cur);
     coords.erase(find(coords.begin(), coords.end(), cur));
+#ifdef SERIAL_OUTPUT_ENABLED
     Serial.print("Cur: ");
     Serial.print(cur.x);
     Serial.print(", ");
     Serial.println(cur.y);
-    delay(200);
+#endif
     nearest = coords[0];
   }
   current = path.front();
   path.pop();
+  
+  s.beepSequenceUp();
 
 }
 
 void loop(){
+#ifdef SERIAL_OUTPUT_ENABLED
   Serial.println("Beginning of loop");
+#endif
   if(path.empty()){
    target.x = 0;
    target.y = 0;
@@ -139,7 +149,7 @@ void loop(){
    target = path.front();
    path.pop();
   }
-  
+#ifdef SERIAL_OUTPUT_ENABLED
   Serial.print("Current: ");
   Serial.print(current.x);
   Serial.print(", ");
@@ -153,19 +163,26 @@ void loop(){
   // first get to correct row
   
   Serial.println("Go to row");
+#endif
   if(target.x > current.x){ // target is North
    toNorth(&robot);
    delay(500);
+#ifdef SERIAL_OUTPUT_ENABLED
    Serial.println("TO NORTH");
    Serial.print("Target - Current = ");
    Serial.println(target.x - current.x);
+#endif
    robot.straightNTiles(target.x - current.x);
+#ifdef SERIAL_OUTPUT_ENABLED
    Serial.println("WENT STRAIGHT");
+#endif
   } 
   else if(target.x < current.x){  // target South
    toSouth(&robot);
    delay(500);
+#ifdef SERIAL_OUTPUT_ENABLED
    Serial.println("TO SOUTH");
+#endif
    robot.straightNTiles(current.x - target.x);
   }
   else{} // it is in the same row so don't do anything
@@ -173,30 +190,40 @@ void loop(){
   delay(1000);
   
   // now correct column
-  
+#ifdef SERIAL_OUTPUT_ENABLED
   Serial.println("Go to col");
+#endif
   if(target.y > current.y){ // target East
    toEast(&robot);
    delay(500);
+#ifdef SERIAL_OUTPUT_ENABLED
    Serial.println("TO EAST");
+#endif
    robot.straightNTiles(target.y - current.y); 
   }
   else if(target.y < current.y){  // target West
    toWest(&robot);
    delay(500);
+#ifdef SERIAL_OUTPUT_ENABLED
    Serial.println("TO WEST");
+#endif
    robot.straightNTiles(current.y - target.y);
   }
   else{} // in same column, nothing to do
   
   current = target;
-  Serial.println("New current assigned");  
+#ifdef SERIAL_OUTPUT_ENABLED
+  Serial.println("New current assigned");
+#endif 
   digitalWrite(LED, HIGH);
   s.beep();
   delay(3000);
-  digitalWrite(LED, LOW); 
+  digitalWrite(LED, LOW);
+  s.beepSequenceDn();
   while(path.empty() && target.x == 0 && target.y == 0){
+#ifdef SERIAL_OUTPUT_ENABLED
     Serial.println("IN END WHILE");
+#endif
   } 
 }
 
@@ -224,9 +251,13 @@ void toSouth(Navigator* n){
    n->turnLeft(); 
   }
   else if(direction == NORTH){
+#ifdef SERIAL_OUTPUT_ENABLED
     Serial.println("First Right");
+#endif
     n->turnRight();
+#ifdef SERIAL_OUTPUT_ENABLED
     Serial.println("Second Right");
+#endif
     n->turnRight(); 
   }
   direction = SOUTH;

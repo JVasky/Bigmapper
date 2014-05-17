@@ -1,8 +1,11 @@
 #include <Navigator.h>
-
 #define MIN_COLLISION_DISTANCE 25
-#define TILE_DISTANCE 1000
-#define TURN_DISTANCE 750
+#define TILE_DISTANCE 500
+#define TURN_RIGHT_DISTANCE 2600//2312
+#define TURN_LEFT_DISTANCE 2100 //1750
+
+#include <Arduino.h>
+
 
 Navigator::Navigator(Motor* RM,Motor* LM,NewPing* us){
   Navigator::RM = RM;
@@ -26,8 +29,8 @@ void Navigator::straight(unsigned long time){
   initOp(time);
 
   while(!atTarget()){
-
-Serial.print(runTime);
+/*
+Serial.print(millis());
 Serial.print("\t");
 Serial.print(freezeTime);
 Serial.print("\t");
@@ -36,7 +39,7 @@ Serial.print("\t");
 Serial.print(atTarget());
 Serial.print("\t");
 Serial.println(isObstructed());
-
+*/
     if(!isObstructed()){
       RM->on();
       LM->on();
@@ -56,7 +59,7 @@ void Navigator::straightNTiles(byte n){
     // RIGHT //
 
 void Navigator::turnRight(){
-  initOp(TURN_DISTANCE);
+  initOp(TURN_RIGHT_DISTANCE);
   while(!atTarget()){
     RM->off();
     LM->on();
@@ -67,7 +70,7 @@ void Navigator::turnRight(){
     // LEFT //
 
 void Navigator::turnLeft(){
-  initOp(TURN_DISTANCE);
+  initOp(TURN_LEFT_DISTANCE);
   while(!atTarget()){
     RM->on();
     LM->off();
@@ -83,8 +86,8 @@ void Navigator::STOP(){
 void Navigator::pause(){
   unsigned long freezeStart = millis();
   while(isObstructed()){
-
-Serial.print(runTime);
+/*
+Serial.print(millis());
 Serial.print("\t");
 Serial.print(freezeTime);
 Serial.print("\t");
@@ -93,7 +96,7 @@ Serial.print("\t");
 Serial.print(atTarget());
 Serial.print("\t");
 Serial.println(isObstructed());
-
+*/
     STOP();
   }
   freezeTime = freezeTime + millis() - freezeStart;
@@ -106,7 +109,10 @@ void Navigator::initOp(unsigned long time){
 }
 
 boolean Navigator::isObstructed(){
-  int dist = us->ping_median()/US_ROUNDTRIP_CM;
+  int dist = 0;
+  if(us != 0){
+    dist = us->ping_median()/US_ROUNDTRIP_CM;
+  }
   return (us != 0) && (dist <= MIN_COLLISION_DISTANCE) && (dist != 0);
 }
 
