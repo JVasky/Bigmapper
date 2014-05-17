@@ -64,15 +64,15 @@ queue<coord> path;
 coord current;
 coord target;
 
-Motor RMotor(RMotorPow,M2,9);
-Motor LMotor(LMotorPow,M1,13);
-
+Motor RMotor(RMotorPow,M2);
+Motor LMotor(LMotorPow,M1);
 NewPing us(US_TRIGGER,US_ECHO);
-Navigator robot(&RMotor, &LMotor,0);
+Navigator robot(&RMotor, &LMotor,&us);
 
 Sound s(SPEAKER);
 
 void setup(){
+  s.beepSequenceLg();
 #ifdef SERIAL_OUTPUT_ENABLED
   Serial.begin(9600);
 #endif
