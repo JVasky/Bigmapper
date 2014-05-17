@@ -3,6 +3,7 @@
 
 #include <Motor.h>
 #include <NewPing.h>
+#include <Sound.h>
 #include <Arduino.h>
 
 class Navigator {
@@ -10,6 +11,8 @@ class Navigator {
   Motor* RM;
   Motor* LM;
   NewPing* us;
+
+  Sound* s;
 
   unsigned long runTime;
   unsigned long freezeTime;

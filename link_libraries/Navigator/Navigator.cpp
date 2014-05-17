@@ -1,16 +1,19 @@
 #include <Navigator.h>
+
+
+#define OBSTRUCTION_TIMEOUT 10000
 #define MIN_COLLISION_DISTANCE 25
 #define TILE_DISTANCE 500
 #define TURN_RIGHT_DISTANCE 2600//2312
 #define TURN_LEFT_DISTANCE 2100 //1750
-
-#include <Arduino.h>
 
 
 Navigator::Navigator(Motor* RM,Motor* LM,NewPing* us){
   Navigator::RM = RM;
   Navigator::LM = LM;
   Navigator::us = us;
+
+  *s = Sound(A0);
 
   Navigator::runTime = 0;
   Navigator::freezeTime = 0;
@@ -85,6 +88,7 @@ void Navigator::STOP(){
 
 void Navigator::pause(){
   unsigned long freezeStart = millis();
+  s->beep();
   while(isObstructed()){
 /*
 Serial.print(millis());
@@ -98,6 +102,10 @@ Serial.print("\t");
 Serial.println(isObstructed());
 */
     STOP();
+    if(millis() - freezeStart > OBSTRUCTION_TIMEOUT){
+      s->beepSequenceDn();
+      while(1){}		// TERMINATE
+    }
   }
   freezeTime = freezeTime + millis() - freezeStart;
 }
